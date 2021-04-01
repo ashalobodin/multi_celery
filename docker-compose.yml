@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  python3:
+    build:
+      context: .
+      dockerfile: python_3/Dockerfile
+    command: celery worker -l INFO
+    networks:
+      - default
+    volumes:
+      - ./python_3/:/app
+
+  python2:
+    build: .
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./multi_celery/:/app
+    ports:
+      - "8000:8000"
+    networks:
+      - default
+
+  redis_test:
+    image: "redis:alpine"
+    networks:
+      - default
+    ports:
+      - 10102:6379
+    volumes:
+      - redis_volume_p3:/data
+
+volumes:
+  multi_celery:
+  redis_volume_p3:
+  python_3:
